@@ -1,0 +1,1 @@
+double average(double x, double y);
