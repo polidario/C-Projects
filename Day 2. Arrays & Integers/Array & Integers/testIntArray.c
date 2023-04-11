@@ -13,10 +13,15 @@
 #include <stdio.h>
 #include "IntArray.h"
 
-int main() {
+int main(int argc, char const *argv[]) {
     int size, * array;
-    printf("\nPlease enter the size of the Array: ");
-    scanf("%d", &size);
+
+    if(argc > 1) {
+        sscanf(argv[1], "%d", &size);
+    }
+
+    // printf("\nPlease enter the size of the Array: ");
+    // scanf("%d", &size);
 
     array = createRandomArray(size);
     if(!array) {
