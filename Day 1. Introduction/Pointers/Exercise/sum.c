@@ -36,3 +36,18 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
+int twoSum(int nums[], int target) {
+    int i, j;
+    int len = sizeof(nums) / sizeof(nums[0]);
+
+    for (i = 0; i < len; i++) {
+        for (j = i + 1; j < len; j++) {
+            if (nums[i] + nums[j] == target) {
+                return [i, j];
+            }
+        }
+    }
+
+    return [0, 0];
+}
