@@ -12,6 +12,7 @@ int * createArray(int size) {
 }
 
 int * createRandomArray(int size) {
+
     int * array = (int *) malloc(size * sizeof(int));
 
     for(int i = 0; i < size; i++) {
@@ -44,6 +45,11 @@ void sortArray(int * array, int size) {
 }
 
 void displayArray(int * array, int size) {
+    if (size > MAXDISPLAY) {
+        printf("\nArray size is too large. Max size is %d\n", MAXDISPLAY);
+        return;
+    }
+
     if(!array) return;
     printf("\n[ ");
     for(int i = 0; i < size; i++) {
