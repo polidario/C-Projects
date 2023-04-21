@@ -1,5 +1,5 @@
+#include "Box.h"
 #include <stdio.h>
-#include "stackStructure.h"
 
 int main() {
     int size = 20;
@@ -23,5 +23,4 @@ int main() {
     destroyStack(stack);
 
     return 0;
-
 }
