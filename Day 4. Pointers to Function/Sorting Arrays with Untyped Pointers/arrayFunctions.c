@@ -1,0 +1,29 @@
+#include "arrayFunctions.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+
+int sortArray(void * array, int size, int elementSize, int (*c)(void *, void *)) {
+    // Do a Bubble sort baby!
+    void * left, * right, * temp = malloc(elementSize);
+    if(!temp) return;
+
+    int i;
+    for (left = array; left < array + (size - 1) * elementSize; left += elementSize) {
+        for (right = left + elementSize; right < array + size * elementSize; right += elementSize) {
+            if (c(left, right) > 0) {
+                memcpy(temp, left, elementSize);
+                memcpy(left, right, elementSize);
+                memcpy(right, temp, elementSize);
+            }
+        }
+    }
+    
+}
+
+void displayArray(int * array, int size) {
+    int i;
+    for (i = 0; i < size; i++) {
+        printf("%d ", array[i]);
+    }
+}
