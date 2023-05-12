@@ -1,106 +1,89 @@
 #include "stack.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-static Stack available = 0;
+// "available" improvement is not applicable here due to the fact that
+// the stack is not of a fixed size
 
 Stack * createStack(int size) {
     Stack * result = (Stack *) malloc(sizeof(Stack));
 
     if(!result) return 0;
-    *result = 0;
+    result->available = 0;
 
     return result;
 }
 
-status push(Stack * stack, void * value) {
-    Stack temp = available;
+status pop(Stack * stack) {
+    Box * temp;                             // We create a temporary pointer
+    if (!stack->head) return ERREMPTY;      // If the stack is empty, we return an error
+    temp = stack->head;                     // We assign the head of the stack to the temporary pointer
+    stack->head = temp;                     // We assign the next available box to the head of the stack
+    temp->next = stack->available;          // We assign the next available box to the temporary pointer
+    stack->available = temp;                // We assign the temporary pointer to the next available box
 
-    if(!temp) {
-        temp = (Stack) malloc(sizeof(Box));
+    return OK;
+}
+
+status push(Stack * stack, void * element) {
+    Box * temp = stack->available;
+    if (!temp) {
+        temp = (Box *) malloc(sizeof(Box));
+    } else {
+        stack->available = temp->next;
     }
 
-    if(!temp) return ERRALLOC;
+    if (!temp) return ERRALLOC;
 
-    if(available) available = available->next;
-
-    temp->value = value;
-
-    temp->next = *stack;
-
-    *stack = temp;
-
+    temp->value = stack->head;
+    //memcpy(temp->value, element, sizeof(void *));
+    memcpy(temp->value, element, stack->size);
+    
+    stack->head = temp;
     return OK;
 }
 
 status top(Stack * stack, void * result) {
-    if(!*stack) return ERREMPTY;
-
-    *(void **) result = (*stack)->value;
-
+    if (!stack->head) return ERREMPTY;
+    memcpy(result, stack->head->value, stack->size);
     return OK;
 }
 
-status pop(Stack * stack) {
-    if(!*stack) return ERREMPTY;
+int isEmpty(Stack * stack) {
+    return stack->head == 0;
+}
 
-    Stack temp = *stack;
-
-    *stack = temp->next;
-
-    temp->next = available;
-
-    available = temp;
-
-    return OK;
+void destroyStack(Stack * stack) {
+    Box * temp = stack->head;
+    while (temp) {
+        stack->head = temp->next;
+        free(temp);
+        temp = stack->head;
+    }
+    free(stack);
 }
 
 int main(int argc, char const *argv[])
 {
-    /* Define 2 integers (value 1 and 2) and a Stack
-        push the int on top of the stack
-        while stack is not empty
-            print top most element
-            pop the stack
+    int size = 20;
+    Stack * stack = createStack(size);
 
-        Check the return value of the functions
-      */
-
-    int value1 = 1;
-    int value2 = 2;
-    Stack * stack = 0;
-
-    stack = createStack(2);
-
+    // Check if stack is created
     if(!stack) {
-        printf("Allocation error\n");
         return 1;
     }
 
-    if(push(stack, &value1)) {
-        printf("Push error\n");
-        return 1;
+    for(int i = 0; i < size; i++) {
+        printf("Pushing %d \n", i);
+        push(stack, &i);
     }
-
-    if(push(stack, &value2)) {
-        printf("Push error\n");
-        return 1;
-    }
-
-    void * result = 0;
 
     while(!isEmpty(stack)) {
-        if(top(stack, &result)) {
-            printf("Top error\n");
-            return 1;
-        }
-
-        printf("%d\n", *(int *) result);
-
-        if(pop(stack)) {
-            printf("Pop error\n");
-            return 1;
-        }
+        int result; // We just need an int because we are only copying int to an int
+        top(stack, &result);
+        printf("%d \n", result);
+        pop(stack);
     }
 
     destroyStack(stack);

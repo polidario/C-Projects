@@ -5,7 +5,13 @@
 typedef struct Box {
     void * value;
     struct Box * next;
-} Box, * Stack;
+} Box;
+
+typedef struct {
+    Box * head;
+    Box * available;
+    int size;
+} Stack;
 
 Stack * createStack(int size);
 
